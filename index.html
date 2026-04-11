@@ -3,22 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英語單字拼字測驗（完整版手機）</title>
+<title>英語單字測驗（一頁一題＋錯題重練）</title>
 <style>
-body {font-family: Arial; padding: 15px; margin:0; background:#f5f5f5;}
+body {font-family: Arial; padding:15px; margin:0; background:#f5f5f5;}
 h2 {text-align:center;}
-.question {background:white; padding:12px; margin-bottom:10px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);} 
-input {width:100%; padding:10px; margin-top:8px; font-size:16px; border-radius:6px; border:1px solid #ccc;}
-button {width:100%; padding:15px; font-size:18px; background:#4CAF50; color:white; border:none; border-radius:10px; margin-top:15px;}
+.card {background:white; padding:20px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); text-align:center;}
+.question {font-size:22px; margin-bottom:15px;}
+input {width:100%; padding:12px; font-size:18px; border-radius:8px; border:1px solid #ccc;}
+button {width:100%; padding:14px; font-size:18px; margin-top:15px; border:none; border-radius:10px;}
+.next {background:#4CAF50; color:white;}
 #result {text-align:center; font-size:20px; margin-top:20px;}
 </style>
 </head>
 <body>
 
-<h2>📱 英語單字測驗（隨機10題）</h2>
-<div id="quiz"></div>
-<button onclick="check()">提交答案</button>
-<button onclick="reloadQuiz()">再來一組</button>
+<h2>📱 一頁一題測驗</h2>
+<div class="card">
+  <div id="qnum"></div>
+  <div id="question" class="question"></div>
+  <input id="answer" placeholder="請輸入英文">
+  <button class="next" onclick="submitAnswer()">下一題</button>
+</div>
 <p id="result"></p>
 
 <script>
@@ -29,64 +34,48 @@ const bank = [
 {q:"洞穴",a:"cave"},{q:"皮帶",a:"belt"},{q:"聊天",a:"chat"},{q:"黑暗",a:"dark"},{q:"社團",a:"club"},
 {q:"日期",a:"date"},{q:"秋天",a:"fall"},{q:"深",a:"deep"},{q:"充分",a:"full"},{q:"每一個",a:"each"},
 {q:"大門",a:"gate"},{q:"東方",a:"east"},{q:"黃金",a:"gold"},{q:"討厭",a:"hate"},{q:"一半",a:"half"},
-{q:"聽到",a:"hear"},{q:"困難的",a:"hard"},{q:"山丘",a:"hill"},{q:"小時",a:"hour"},{q:"孔洞",a:"hole"},
-{q:"加入",a:"join"},{q:"希望",a:"hope"},{q:"七月",a:"july"},{q:"六月",a:"june"},{q:"保持",a:"keep"},
-{q:"國王",a:"king"},{q:"數學",a:"math"},{q:"餐",a:"meal"},{q:"左邊",a:"left"},{q:"下一個",a:"next"},
-{q:"過去",a:"past"},{q:"一次",a:"once"},{q:"路徑",a:"path"},{q:"烤箱",a:"oven"},{q:"測驗",a:"quiz"},
-{q:"比賽",a:"race"},{q:"鹽巴",a:"salt"},{q:"保存",a:"save"},{q:"隊伍",a:"team"},{q:"帳篷",a:"tent"},
-{q:"旅行",a:"tour"},{q:"景色",a:"view"},{q:"溫暖的",a:"warm"},{q:"西方",a:"west"},{q:"木頭",a:"wood"},
-{q:"零",a:"zero"},{q:"同意",a:"agree"},{q:"之後",a:"after"},{q:"開始",a:"begin"},{q:"地球",a:"earth"}
+{q:"聽到",a:"hear"},{q:"困難的",a:"hard"},{q:"山丘",a:"hill"},{q:"小時",a:"hour"},{q:"孔洞",a:"hole"}
 ];
 
-let current = [];
+let questions = shuffle([...bank]).slice(0,10);
+let wrong = [];
+let index = 0;
+let score = 0;
 
 function shuffle(arr){return arr.sort(()=>0.5-Math.random());}
 
-function loadQuiz(){
-  current = shuffle([...bank]).slice(0,10);
-  const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML="";
-  current.forEach((item,i)=>{
-    quizDiv.innerHTML += `
-    <div class="question">
-      <div>${i+1}. ${item.q}</div>
-      <input id="q${i}" placeholder="請輸入英文">
-    </div>`;
-  });
-}
-
-function check(){
-  let score=0;
-  let wrong=[];
-  current.forEach((item,i)=>{
-    let ans=document.getElementById("q"+i).value.trim().toLowerCase();
-    if(ans===item.a){score++;} else {wrong.push(item);} 
-  });
-  document.getElementById("result").innerText = `🎯 得分：${score}/10`;
-  if(wrong.length>0){
-    setTimeout(()=>{
-      alert("錯題再練一次！");
-      current = wrong;
-      reloadWrong();
-    },500);
+function load(){
+  if(index < questions.length){
+    document.getElementById("qnum").innerText = `第 ${index+1} 題 / ${questions.length}`;
+    document.getElementById("question").innerText = questions[index].q;
+    document.getElementById("answer").value = "";
+  } else {
+    if(wrong.length > 0){
+      alert("進入錯題重練！");
+      questions = wrong;
+      wrong = [];
+      index = 0;
+      load();
+    } else {
+      document.getElementById("question").innerText = "完成！";
+      document.getElementById("qnum").innerText = "";
+      document.getElementById("result").innerText = `🎉 總分：${score}`;
+    }
   }
 }
 
-function reloadWrong(){
-  const quizDiv = document.getElementById("quiz");
-  quizDiv.innerHTML="";
-  current.forEach((item,i)=>{
-    quizDiv.innerHTML += `
-    <div class="question">
-      <div>${i+1}. ${item.q}</div>
-      <input id="q${i}" placeholder="再試一次">
-    </div>`;
-  });
+function submitAnswer(){
+  let ans = document.getElementById("answer").value.trim().toLowerCase();
+  if(ans === questions[index].a){
+    score++;
+  } else {
+    wrong.push(questions[index]);
+  }
+  index++;
+  load();
 }
 
-function reloadQuiz(){loadQuiz(); document.getElementById("result").innerText="";}
-
-loadQuiz();
+load();
 </script>
 
 </body>
