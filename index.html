@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英語單字拼字測驗（完整版手機）</title>
+<style>
+body {font-family: Arial; padding: 15px; margin:0; background:#f5f5f5;}
+h2 {text-align:center;}
+.question {background:white; padding:12px; margin-bottom:10px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1);} 
+input {width:100%; padding:10px; margin-top:8px; font-size:16px; border-radius:6px; border:1px solid #ccc;}
+button {width:100%; padding:15px; font-size:18px; background:#4CAF50; color:white; border:none; border-radius:10px; margin-top:15px;}
+#result {text-align:center; font-size:20px; margin-top:20px;}
+</style>
+</head>
+<body>
+
+<h2>?? 英語單字測驗（隨機10題）</h2>
+<div id="quiz"></div>
+<button onclick="check()">提交答案</button>
+<button onclick="reloadQuiz()">再來一組</button>
+<p id="result"></p>
+
+<script>
+const bank = [
+{q:"如同",a:"as"},{q:"所以",a:"so"},{q:"之前",a:"ago"},{q:"工作",a:"job"},{q:"鑰匙",a:"key"},
+{q:"讓",a:"let"},{q:"但是",a:"yet"},{q:"如果",a:"if"},{q:"健身房",a:"gym"},{q:"果醬",a:"jam"},
+{q:"低",a:"low"},{q:"五月",a:"may"},{q:"用",a:"use"},{q:"露營",a:"camp"},{q:"銀行",a:"bank"},
+{q:"洞穴",a:"cave"},{q:"皮帶",a:"belt"},{q:"聊天",a:"chat"},{q:"黑暗",a:"dark"},{q:"社團",a:"club"},
+{q:"日期",a:"date"},{q:"秋天",a:"fall"},{q:"深",a:"deep"},{q:"充分",a:"full"},{q:"每一個",a:"each"},
+{q:"大門",a:"gate"},{q:"東方",a:"east"},{q:"黃金",a:"gold"},{q:"討厭",a:"hate"},{q:"一半",a:"half"},
+{q:"聽到",a:"hear"},{q:"困難的",a:"hard"},{q:"山丘",a:"hill"},{q:"小時",a:"hour"},{q:"孔洞",a:"hole"},
+{q:"加入",a:"join"},{q:"希望",a:"hope"},{q:"七月",a:"july"},{q:"六月",a:"june"},{q:"保持",a:"keep"},
+{q:"國王",a:"king"},{q:"數學",a:"math"},{q:"餐",a:"meal"},{q:"左邊",a:"left"},{q:"下一個",a:"next"},
+{q:"過去",a:"past"},{q:"一次",a:"once"},{q:"路徑",a:"path"},{q:"烤箱",a:"oven"},{q:"測驗",a:"quiz"},
+{q:"比賽",a:"race"},{q:"鹽巴",a:"salt"},{q:"保存",a:"save"},{q:"隊伍",a:"team"},{q:"帳篷",a:"tent"},
+{q:"旅行",a:"tour"},{q:"景色",a:"view"},{q:"溫暖的",a:"warm"},{q:"西方",a:"west"},{q:"木頭",a:"wood"},
+{q:"零",a:"zero"},{q:"同意",a:"agree"},{q:"之後",a:"after"},{q:"開始",a:"begin"},{q:"地球",a:"earth"}
+];
+
+let current = [];
+
+function shuffle(arr){return arr.sort(()=>0.5-Math.random());}
+
+function loadQuiz(){
+  current = shuffle([...bank]).slice(0,10);
+  const quizDiv = document.getElementById("quiz");
+  quizDiv.innerHTML="";
+  current.forEach((item,i)=>{
+    quizDiv.innerHTML += `
+    <div class="question">
+      <div>${i+1}. ${item.q}</div>
+      <input id="q${i}" placeholder="請輸入英文">
+    </div>`;
+  });
+}
+
+function check(){
+  let score=0;
+  let wrong=[];
+  current.forEach((item,i)=>{
+    let ans=document.getElementById("q"+i).value.trim().toLowerCase();
+    if(ans===item.a){score++;} else {wrong.push(item);} 
+  });
+  document.getElementById("result").innerText = `?? 得分：${score}/10`;
+  if(wrong.length>0){
+    setTimeout(()=>{
+      alert("錯題再練一次！");
+      current = wrong;
+      reloadWrong();
+    },500);
+  }
+}
+
+function reloadWrong(){
+  const quizDiv = document.getElementById("quiz");
+  quizDiv.innerHTML="";
+  current.forEach((item,i)=>{
+    quizDiv.innerHTML += `
+    <div class="question">
+      <div>${i+1}. ${item.q}</div>
+      <input id="q${i}" placeholder="再試一次">
+    </div>`;
+  });
+}
+
+function reloadQuiz(){loadQuiz(); document.getElementById("result").innerText="";}
+
+loadQuiz();
+</script>
+
+</body>
+</html>
