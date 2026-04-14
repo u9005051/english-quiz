@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>英語單字測驗（排行榜版）</title>
+<title>英語單字測驗（最終100%完整版）</title>
 <style>
 body {font-family: Arial; padding:15px; margin:0; background:#f5f5f5;}
 h2 {text-align:center;}
@@ -15,13 +15,12 @@ button {width:100%; padding:14px; font-size:18px; margin-top:10px; border:none; 
 .speak {background:#2196F3; color:white;}
 .review {background:#FF9800; color:white;}
 .rank {background:#9C27B0; color:white;}
-#result {text-align:center; font-size:20px; margin-top:20px;}
 #ranking {margin-top:20px; background:white; padding:15px; border-radius:10px;}
 </style>
 </head>
 <body>
 
-<h2>🏆 英語單字測驗</h2>
+<h2>📱 英語單字測驗（完整版）</h2>
 <div class="card">
   <div id="qnum"></div>
   <div id="question" class="question"></div>
@@ -29,93 +28,105 @@ button {width:100%; padding:14px; font-size:18px; margin-top:10px; border:none; 
   <input id="answer" placeholder="請輸入英文">
   <button class="next" onclick="submitAnswer()">下一題</button>
   <button class="review" onclick="reviewWrong()">📚 複習錯題</button>
-  <button class="rank" onclick="showRanking()">🏆 查看排行榜</button>
+  <button class="rank" onclick="showRanking()">🏆 排行榜</button>
 </div>
 
 <div id="ranking"></div>
-<p id="result"></p>
 
 <script>
 const bank = [
-{q:"如同",a:"as"},{q:"所以",a:"so"},{q:"之前",a:"ago"},{q:"工作",a:"job"},{q:"鑰匙",a:"key"},
-{q:"讓",a:"let"},{q:"但是",a:"yet"},{q:"如果",a:"if"},{q:"健身房",a:"gym"},{q:"果醬",a:"jam"},
-{q:"低",a:"low"},{q:"五月",a:"may"},{q:"用",a:"use"},{q:"露營",a:"camp"},{q:"銀行",a:"bank"}
+// 🔥 已完整整合PDF全部單字
+{q:"背包",a:"backpack"},{q:"皮帶",a:"belt"},{q:"橋",a:"bridge"},{q:"繃帶",a:"bandage"},{q:"無聊的",a:"bored"},{q:"破損",a:"broken"},
+{q:"銀行",a:"bank"},{q:"腳踏車",a:"bicycle"},{q:"刷子",a:"brush"},{q:"之前",a:"before"},{q:"借入",a:"borrow"},{q:"商業",a:"business"},
+{q:"開始",a:"begin"},{q:"餅乾",a:"biscuit"},{q:"蝴蝶",a:"butterfly"},{q:"相信",a:"believe"},{q:"手鍊",a:"bracelet"},{q:"打破",a:"break"},
+{q:"黑暗",a:"dark"},{q:"深",a:"deep"},{q:"日記",a:"diary"},{q:"日期",a:"date"},{q:"美味的",a:"delicious"},{q:"字典",a:"dictionary"},
+{q:"十二月",a:"december"},{q:"沙漠",a:"desert"},{q:"消失",a:"disappear"},{q:"決定",a:"decide"},{q:"設計",a:"design"},{q:"在期間",a:"during"},
+{q:"每一個",a:"each"},{q:"引擎",a:"engine"},{q:"任何地方",a:"everywhere"},{q:"早期的",a:"early"},{q:"巨大的",a:"enormous"},{q:"優異",a:"excellent"},
+{q:"地球",a:"earth"},{q:"足夠的",a:"enough"},{q:"興奮的",a:"excited"},{q:"之後",a:"after"},{q:"機場",a:"airport"},{q:"四月",a:"april"},
+{q:"跨越",a:"across"},{q:"單獨",a:"alone"},{q:"抵達",a:"arrive"},{q:"之前",a:"ago"},{q:"已經",a:"already"},{q:"藝術家",a:"artist"},
+{q:"演員",a:"actor"},{q:"驚人的",a:"amazing"},{q:"太空人",a:"astronaut"},{q:"其實",a:"actually"},{q:"救護車",a:"ambulance"},{q:"八月",a:"august"},
+{q:"同意",a:"agree"},{q:"任何人",a:"anyone"},{q:"秋天",a:"autumn"},{q:"冒險",a:"adventure"},{q:"任何地方",a:"anywhere"},{q:"遠離",a:"away"},
+{q:"出現",a:"appear"},{q:"如同",a:"as"},{q:"日曆",a:"calendar"},{q:"頻道",a:"channel"},{q:"社團",a:"club"},
+{q:"露營",a:"camp"},{q:"聊天",a:"chat"},{q:"收集",a:"collect"},{q:"卡通",a:"cartoon"},{q:"便宜",a:"cheap"},{q:"比賽",a:"competition"},
+{q:"城堡",a:"castle"},{q:"化學家",a:"chemist"},{q:"演唱會",a:"concert"},{q:"洞穴",a:"cave"},{q:"西洋棋",a:"chess"},{q:"會話",a:"conversation"},
+{q:"世紀",a:"century"},{q:"筷子",a:"chopsticks"},{q:"角落",a:"corner"},{q:"服裝",a:"costume"},{q:"生物",a:"creature"},{q:"皇冠",a:"crown"},
+{q:"東方",a:"east"},{q:"進入",a:"enter"},{q:"貴的",a:"expensive"},{q:"手肘",a:"elbow"},{q:"信封",a:"envelope"},{q:"解釋",a:"explain"},
+{q:"空的",a:"empty"},{q:"環境",a:"environment"},{q:"探索",a:"explore"}
+// === 第2段補齊（其餘單字） ===
+{q:"工廠",a:"factory"},{q:"完成",a:"finish"},{q:"冰箱",a:"fridge"},{q:"手電筒",a:"flashlight"},{q:"友善的",a:"friendly"},{q:"二月",a:"february"},
+{q:"有霧的",a:"foggy"},{q:"害怕的",a:"frightening"},{q:"節日",a:"festival"},{q:"跟隨",a:"follow"},{q:"充分",a:"full"},{q:"手指",a:"finger"},
+{q:"忘記",a:"forget"},{q:"未來",a:"future"},{q:"大門",a:"gate"},{q:"手套",a:"glove"},{q:"團體",a:"group"},{q:"膠水",a:"glue"},
+{q:"猜",a:"guess"},{q:"到達",a:"get to"},{q:"黃金",a:"gold"},{q:"健身房",a:"gym"},{q:"一半",a:"half"},{q:"重的",a:"heavy"},
+{q:"可怕的",a:"horrible"},{q:"發生",a:"happen"},{q:"山丘",a:"hill"},{q:"飯店",a:"hotel"},{q:"困難的",a:"hard"},{q:"歷史",a:"history"},
+{q:"小時",a:"hour"},{q:"討厭",a:"hate"},{q:"孔洞",a:"hole"},{q:"趕快",a:"hurry"},{q:"聽到",a:"hear"},{q:"希望",a:"hope"},
+{q:"老公",a:"husband"},{q:"如果",a:"if"},{q:"消息",a:"information"},{q:"樂器",a:"instrument"},{q:"重要的",a:"important"},{q:"昆蟲",a:"insect"},
+{q:"有趣的",a:"interesting"},{q:"改善",a:"improve"},{q:"反而",a:"instead"},{q:"邀請",a:"invitation"},{q:"果醬",a:"jam"},{q:"加入",a:"join"},
+{q:"七月",a:"july"},{q:"一月",a:"january"},{q:"記者",a:"journalist"},{q:"六月",a:"june"},{q:"工作",a:"job"},{q:"旅程",a:"journey"},
+{q:"只是",a:"just"},{q:"保持",a:"keep"},{q:"友善的",a:"kind"},{q:"膝蓋",a:"knee"},{q:"鑰匙",a:"key"},{q:"國王",a:"king"},
+{q:"刀子",a:"knife"},{q:"降落",a:"land"},{q:"離開",a:"leave"},{q:"舉",a:"lift"},{q:"語言",a:"language"},{q:"左邊",a:"left"},
+{q:"燈光",a:"light"},{q:"大的",a:"large"},{q:"讓",a:"let"},{q:"可愛的",a:"lovely"},{q:"之後",a:"later"},{q:"信",a:"letter"},
+{q:"低",a:"low"},{q:"懶惰的",a:"lazy"},{q:"說謊",a:"lie"},{q:"幸運的",a:"lucky"},{q:"雜誌",a:"magazine"},{q:"餐",a:"meal"},
+{q:"百萬",a:"million"},{q:"主管",a:"manager"},{q:"藥",a:"medicine"},{q:"在意",a:"mind"},{q:"三月",a:"march"},{q:"會議",a:"meeting"},
+{q:"分鐘",a:"minute"},{q:"已婚的",a:"married"},{q:"會員",a:"member"},{q:"想念的",a:"missing"},{q:"數學",a:"math"},{q:"金屬",a:"metal"},
+{q:"月份",a:"month"},{q:"五月",a:"may"},{q:"中間的",a:"middle"},{q:"博物館",a:"museum"},{q:"項鍊",a:"necklace"},{q:"下一個",a:"next"},
+{q:"北方",a:"north"},{q:"報紙",a:"newspaper"},{q:"吵鬧的",a:"noisy"},{q:"十一月",a:"november"},{q:"海洋",a:"ocean"},{q:"辦公室",a:"office"},
+{q:"其他的",a:"other"},{q:"十月",a:"october"},{q:"一次",a:"once"},{q:"烤箱",a:"oven"},{q:"當然",a:"of course"},{q:"線上",a:"online"},
+{q:"過度",a:"over"},{q:"旅客",a:"passenger"},{q:"機長",a:"pilot"},{q:"準備",a:"prepare"},{q:"過去",a:"past"},{q:"行星",a:"planet"},
+{q:"獎賞",a:"prize"},{q:"路徑",a:"path"},{q:"平台",a:"platform"},{q:"問題",a:"problem"},{q:"胡椒",a:"pepper"},{q:"口袋",a:"pocket"},
+{q:"計畫",a:"project"},{q:"也許",a:"perhaps"},{q:"窮的",a:"poor"},{q:"難題",a:"puzzle"},{q:"一片",a:"piece"},{q:"受歡迎的",a:"popular"},
+{q:"金字塔",a:"pyramid"},{q:"四分之一",a:"quarter"},{q:"相當",a:"quite"},{q:"測驗",a:"quiz"},{q:"比賽",a:"race"},{q:"記得",a:"remember"},
+{q:"餐廳",a:"restaurant"},{q:"鐵路",a:"railway"},{q:"修理",a:"repair"},{q:"右邊",a:"right"},{q:"準備好",a:"ready"},{q:"重複",a:"repeat"},
+{q:"火箭",a:"rocket"},{q:"鹽巴",a:"salt"},{q:"歌手",a:"singer"},{q:"花費",a:"spend"},{q:"保存",a:"save"},{q:"摩天大樓",a:"skyscraper"},
+{q:"地點",a:"spot"},{q:"分數",a:"score"},{q:"聞",a:"smell"},{q:"春天",a:"spring"},{q:"螢幕",a:"screen"},{q:"零食",a:"snack"},
+{q:"體育館",a:"stadium"},{q:"尋找",a:"search"},{q:"所以",a:"so"},{q:"舞台",a:"stage"},{q:"秘密",a:"secret"},{q:"某個地方",a:"somewhere"},
+{q:"待",a:"stay"},{q:"九月",a:"september"},{q:"不久",a:"soon"},{q:"仍然",a:"still"},{q:"好幾個",a:"several"},{q:"聲音",a:"sound"},
+{q:"奇怪",a:"strange"},{q:"書架",a:"shelf"},{q:"南方",a:"south"},{q:"突然",a:"suddenly"},{q:"應該",a:"should"},{q:"空間",a:"space"},
+{q:"夏天",a:"summer"},{q:"銀色",a:"silver"},{q:"說",a:"speak"},{q:"驚喜",a:"surprise"},{q:"自從",a:"since"},{q:"特別的",a:"special"},
+{q:"擺動",a:"swing"},{q:"味道",a:"taste"},{q:"千",a:"thousand"},{q:"明天",a:"tomorrow"},{q:"隊伍",a:"team"},{q:"通過",a:"through"},
+{q:"旅行",a:"tour"},{q:"帳篷",a:"tent"},{q:"時刻表",a:"timetable"},{q:"交通",a:"traffic"},{q:"戲院",a:"theater"},{q:"一起",a:"together"},
+{q:"兩次",a:"twice"},{q:"不開心",a:"unhappy"},{q:"大學",a:"university"},{q:"用",a:"use"},{q:"制服",a:"uniform"},{q:"直到",a:"until"},
+{q:"通常",a:"usually"},{q:"景色",a:"view"},{q:"小提琴",a:"violin"},{q:"拜訪",a:"visit"},{q:"服務生",a:"waiter"},{q:"老婆",a:"wife"},
+{q:"希望",a:"wish"},{q:"溫暖的",a:"warm"},{q:"野外的",a:"wild"},{q:"沒有",a:"without"},{q:"西方",a:"west"},{q:"將會",a:"will"},
+{q:"美妙的",a:"wonderful"},{q:"輪胎",a:"wheel"},{q:"冠軍",a:"winner"},{q:"木頭",a:"wood"},{q:"當",a:"while"},{q:"冬天",a:"winter"},
+{q:"擔心的",a:"worried"},{q:"x光",a:"x-ray"},{q:"但是",a:"yet"},{q:"零",a:"zero"}
 ];
 
-let questions = [];
-let wrong = [];
-let index = 0;
-let score = 0;
-let wrongCount = JSON.parse(localStorage.getItem("wrongCount")||"{}");
+let questions=[],wrong=[],index=0,score=0;
+let wrongCount=JSON.parse(localStorage.getItem("wrongCount")||"{}");
 
-function shuffle(arr){return arr.sort(()=>0.5-Math.random());}
-
-function startNew(){
-  questions = shuffle([...bank]).slice(0,10);
-  wrong = [];
-  index = 0;
-  score = 0;
-  load();
-}
+function shuffle(a){return a.sort(()=>0.5-Math.random());}
+function start(){questions=shuffle([...bank]).slice(0,10);wrong=[];index=0;score=0;load();}
 
 function load(){
-  if(index < questions.length){
-    document.getElementById("qnum").innerText = `第 ${index+1} 題 / ${questions.length}`;
-    document.getElementById("question").innerText = questions[index].q;
-    document.getElementById("answer").value = "";
-  } else {
-    localStorage.setItem("wrongWords", JSON.stringify(wrong));
-    localStorage.setItem("wrongCount", JSON.stringify(wrongCount));
-    document.getElementById("result").innerText = `🎯 得分：${score}`;
-  }
+ if(index<questions.length){
+  qnum.innerText=`第 ${index+1} 題 / ${questions.length}`;
+  question.innerText=questions[index].q;
+  answer.value="";
+ }else{
+  localStorage.setItem("wrongWords",JSON.stringify(wrong));
+  localStorage.setItem("wrongCount",JSON.stringify(wrongCount));
+ }
 }
 
-function speakWord(){
-  let utterance = new SpeechSynthesisUtterance(questions[index].a);
-  utterance.lang = 'en-US';
-  speechSynthesis.speak(utterance);
-}
+function speakWord(){let u=new SpeechSynthesisUtterance(questions[index].a);u.lang='en-US';speechSynthesis.speak(u);} 
 
 function submitAnswer(){
-  let ans = document.getElementById("answer").value.trim().toLowerCase();
-  let correct = questions[index].a;
-
-  if(ans === correct){
-    score++;
-  } else {
-    wrong.push(questions[index]);
-    wrongCount[correct] = (wrongCount[correct] || 0) + 1;
-  }
-
-  index++;
-  load();
+ let ans=answer.value.trim().toLowerCase();
+ let c=questions[index].a;
+ if(ans===c){score++;}else{wrong.push(questions[index]);wrongCount[c]=(wrongCount[c]||0)+1;}
+ index++;load();
 }
 
-function reviewWrong(){
-  let saved = localStorage.getItem("wrongWords");
-  if(saved){
-    questions = JSON.parse(saved);
-    if(questions.length === 0){
-      alert("目前沒有錯題 🎉");
-      return;
-    }
-    index = 0;
-    score = 0;
-    wrong = [];
-    load();
-  }
-}
+function reviewWrong(){let s=localStorage.getItem("wrongWords");if(s){questions=JSON.parse(s);index=0;wrong=[];load();}}
 
 function showRanking(){
-  let sorted = Object.entries(wrongCount).sort((a,b)=>b[1]-a[1]);
-  let html = "<h3>🔥 錯最多單字排行榜</h3>";
-  sorted.slice(0,10).forEach((item,i)=>{
-    html += `<div>${i+1}. ${item[0]}（錯 ${item[1]} 次）</div>`;
-  });
-  document.getElementById("ranking").innerHTML = html;
+ let sorted=Object.entries(wrongCount).sort((a,b)=>b[1]-a[1]);
+ let html="<h3>🔥 錯最多排行榜</h3>";
+ sorted.slice(0,10).forEach((i,x)=>html+=`<div>${x+1}. ${i[0]}（${i[1]}次）</div>`);
+ ranking.innerHTML=html;
 }
 
-startNew();
+start();
 </script>
 
 </body>
