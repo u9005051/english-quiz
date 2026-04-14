@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英語單字王測驗（完整版）</title>
+<style>
+body {font-family: Arial; padding:15px; margin:0; background:#f5f5f5;}
+h2 {text-align:center;}
+.card {background:white; padding:20px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1); text-align:center;}
+.question {font-size:24px; margin-bottom:15px;}
+input {width:100%; padding:12px; font-size:18px; border-radius:8px;}
+button {width:100%; padding:14px; font-size:18px; margin-top:10px; border:none; border-radius:10px;}
+.next {background:#4CAF50; color:white;}
+.speak {background:#2196F3; color:white;}
+.review {background:#FF9800; color:white;}
+.rank {background:#9C27B0; color:white;}
+#ranking {margin-top:20px; background:white; padding:15px; border-radius:10px;}
+</style>
+</head>
+<body>
+
+<h2>📱 英語單字王測驗</h2>
+
+<div class="card">
+  <div id="qnum"></div>
+  <div id="question" class="question"></div>
+  <button class="speak" onclick="speakWord()">🔊 播放單字</button>
+  <input id="answer" placeholder="請輸入英文">
+  <button class="next" onclick="submitAnswer()">下一題</button>
+  <button class="review" onclick="reviewWrong()">📚 複習錯題</button>
+  <button class="rank" onclick="showRanking()">🏆 排行榜</button>
+</div>
+
+<div id="ranking"></div>
+
+<script>
+
+const bank = [
+{q:"如同",a:"as"},{q:"所以",a:"so"},{q:"之前",a:"ago"},{q:"工作",a:"job"},
+{q:"鑰匙",a:"key"},{q:"讓",a:"let"},{q:"但是",a:"yet"},{q:"如果",a:"if"},
+{q:"健身房",a:"gym"},{q:"果醬",a:"jam"},{q:"低",a:"low"},{q:"五月",a:"may"},
+{q:"用",a:"use"},{q:"露營",a:"camp"},{q:"銀行",a:"bank"},{q:"洞穴",a:"cave"},
+{q:"皮帶",a:"belt"},{q:"聊天",a:"chat"},{q:"黑暗",a:"dark"},{q:"社團",a:"club"},
+{q:"日期",a:"date"},{q:"秋天",a:"fall"},{q:"深",a:"deep"},{q:"充分",a:"full"},
+{q:"每一個",a:"each"},{q:"大門",a:"gate"},{q:"東方",a:"east"},{q:"黃金",a:"gold"},
+{q:"討厭",a:"hate"},{q:"一半",a:"half"},{q:"聽到",a:"hear"},{q:"困難的",a:"hard"},
+{q:"山丘",a:"hill"},{q:"小時",a:"hour"},{q:"孔洞",a:"hole"},{q:"加入",a:"join"}
+];
+
+let questions=[],wrong=[],index=0,score=0;
+let wrongCount=JSON.parse(localStorage.getItem("wrongCount")||"{}");
+
+function shuffle(arr){return arr.sort(()=>0.5-Math.random());}
+
+function start(){
+  questions = shuffle([...bank]).slice(0,10);
+  index=0; score=0; wrong=[];
+  load();
+}
+
+function load(){
+  if(index < questions.length){
+    document.getElementById("qnum").innerText =
+      `第 ${index+1} 題 / ${questions.length}`;
+    document.getElementById("question").innerText =
+      questions[index].q;
+    document.getElementById("answer").value="";
+  }else{
+    localStorage.setItem("wrongWords",JSON.stringify(wrong));
+    localStorage.setItem("wrongCount",JSON.stringify(wrongCount));
+    document.getElementById("question").innerText="完成！";
+  }
+}
+
+function speakWord(){
+  let u=new SpeechSynthesisUtterance(questions[index].a);
+  u.lang='en-US';
+  speechSynthesis.speak(u);
+}
+
+function submitAnswer(){
+  let ans=document.getElementById("answer").value.trim().toLowerCase();
+  let correct=questions[index].a;
+
+  if(ans===correct){
+    score++;
+  }else{
+    wrong.push(questions[index]);
+    wrongCount[correct]=(wrongCount[correct]||0)+1;
+  }
+
+  index++;
+  load();
+}
+
+function reviewWrong(){
+  let s=localStorage.getItem("wrongWords");
+  if(s){
+    questions=JSON.parse(s);
+    index=0;
+    wrong=[];
+    load();
+  }
+}
+
+function showRanking(){
+  let sorted=Object.entries(wrongCount)
+    .sort((a,b)=>b[1]-a[1]);
+  let html="<h3>🔥 錯最多排行榜</h3>";
+  sorted.slice(0,10).forEach((i,x)=>{
+    html+=`<div>${x+1}. ${i[0]}（${i[1]}次）</div>`;
+  });
+  document.getElementById("ranking").innerHTML=html;
+}
+
+window.onload=start;
+
+</script>
+
+</body>
+</html>
